@@ -1,12 +1,13 @@
 extern crate nalgebra as na;
 use na::{Vector3};
-use crate::grav::GravitatingBody;
 
-pub fn verlet_integrate<F>(body: &mut GravitatingBody, dt: f64, get_acceleration: F)
+use super::*;
+
+pub fn verlet_integrate<F, B>(body: &mut B, dt: f64, get_acceleration: F)
 where
     F: Fn(&Vector3<f64>) -> Vector3<f64>,
+    B: PhysicsBody,
 {
-
     let old_acc = get_acceleration(&body.get_position());
     // Calculate the new position
     let new_position = body.get_position() + body.get_velocity() * dt + 0.5 * old_acc * dt * dt;
@@ -22,6 +23,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::grav::*;
     
     #[test]
     fn test_verlet_integration_energy_conservation() {

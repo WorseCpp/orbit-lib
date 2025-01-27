@@ -1,7 +1,11 @@
 extern crate nalgebra as na;
 use na::{Vector3};
 
-pub trait Body {
+mod grav;
+mod non_grav;
+mod integrators;
+
+pub trait PhysicsBody {
     fn get_mass(&self) -> f64;
     fn get_position(&self) -> Vector3<f64>;
     fn get_velocity(&self) -> Vector3<f64>;

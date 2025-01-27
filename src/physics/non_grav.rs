@@ -1,6 +1,7 @@
 extern crate nalgebra as na;
 use na::{Vector3};
 
+use super::*;
 
 pub struct BallisticBody {
     mass: f64,
@@ -14,7 +15,7 @@ impl BallisticBody {
     }
 }
 
-impl Body for BallisticBody {
+impl PhysicsBody for BallisticBody {
     fn get_mass(&self) -> f64 {
         self.mass
     }

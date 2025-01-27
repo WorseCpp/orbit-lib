@@ -1,5 +1,4 @@
-mod grav;
-mod integrators;
+mod physics;
 
 fn main() {
     println!("Hello, world!");

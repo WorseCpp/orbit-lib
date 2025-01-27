@@ -1,6 +1,8 @@
 extern crate nalgebra as na;
 use na::{Vector3};
 
+use super::*;
+
 const G: f64 = 6.67430e-11; // Gravitational constant in m^3 kg^-1 s^-2
 
 pub struct GravitatingBody {
@@ -26,34 +28,30 @@ impl GravitatingBody {
         let distance = (self.position - r).magnitude();
         -G * self.mass / distance
     }
-
-    pub fn set_position(&mut self, position: Vector3<f64>) {
-        self.position = position;
-    }
-
-    pub fn set_velocity(&mut self, velocity: Vector3<f64>) {
-        self.velocity = velocity;
-    }
-    
-    pub fn get_position(&self) -> Vector3<f64> {
-        self.position
-    }
-
-    pub fn get_mass(&self) -> f64 {
-        self.mass
-    }
-
-    pub fn get_velocity(&self) -> Vector3<f64> {
-        self.velocity
-    }
-
-
     pub fn get_kinetic(&self) -> f64 {
         0.5 * self.mass * self.velocity.magnitude_squared()
     }
+}
 
-    pub fn get_momentum(&self) -> Vector3<f64> {
-        self.mass * self.velocity
+impl PhysicsBody for GravitatingBody {
+    fn get_mass(&self) -> f64 {
+        self.mass
+    }
+
+    fn get_position(&self) -> Vector3<f64> {
+        self.position
+    }
+
+    fn get_velocity(&self) -> Vector3<f64> {
+        self.velocity
+    }
+
+    fn set_position(&mut self, position: Vector3<f64>) {
+        self.position = position;
+    }
+
+    fn set_velocity(&mut self, velocity: Vector3<f64>) {
+        self.velocity = velocity;
     }
 }
 
