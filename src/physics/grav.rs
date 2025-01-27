@@ -19,7 +19,7 @@ impl GravitatingBody {
     pub fn get_grav_acc(&self, r: Vector3<f64>) -> Vector3<f64> {
         let direction = self.position - r;
         let distance_squared = direction.magnitude_squared();
-        let distance = distance_squared.sqrt();
+        let _distance = distance_squared.sqrt();
         let force_magnitude = G * self.mass / distance_squared;
         direction.normalize() * force_magnitude
     }
