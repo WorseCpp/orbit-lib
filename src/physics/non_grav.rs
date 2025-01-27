@@ -1,21 +1,31 @@
 extern crate nalgebra as na;
 use na::{Vector3};
+use nalgebra::zero;
 
 use super::*;
 
 pub struct BallisticBody {
     mass: f64,
     position: Vector3<f64>,
-    velocity: Vector3<f64>,
+    velocity: Vector3<f64>
 }
 
 impl BallisticBody {
     pub fn new(mass: f64, position: Vector3<f64>, velocity: Vector3<f64>) -> Self {
-        BallisticBody { mass, position, velocity }
+        BallisticBody { mass, position, velocity}
     }
 }
 
 impl PhysicsBody for BallisticBody {
+    
+    fn boxed_clone(&self) -> Box<dyn PhysicsBody> {
+        Box::new(BallisticBody {
+            mass: self.mass,
+            position: self.position,
+            velocity: self.velocity,
+        })
+    }
+
     fn get_mass(&self) -> f64 {
         self.mass
     }

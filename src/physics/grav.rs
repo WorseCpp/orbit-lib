@@ -8,12 +8,12 @@ const G: f64 = 6.67430e-11; // Gravitational constant in m^3 kg^-1 s^-2
 pub struct GravitatingBody {
     mass: f64,
     position: Vector3<f64>,
-    velocity: Vector3<f64>,
+    velocity: Vector3<f64>
 }
 
 impl GravitatingBody {
     pub fn new(mass: f64, position: Vector3<f64>, velocity: Vector3<f64>) -> Self {
-        GravitatingBody { mass, position, velocity }
+        GravitatingBody { mass, position, velocity}
     }
 
     pub fn get_grav_acc(&self, r: Vector3<f64>) -> Vector3<f64> {
@@ -34,6 +34,15 @@ impl GravitatingBody {
 }
 
 impl PhysicsBody for GravitatingBody {
+
+    fn boxed_clone(&self) -> Box<dyn PhysicsBody> {
+        Box::new(GravitatingBody {
+            mass: self.mass,
+            position: self.position,
+            velocity: self.velocity,
+        })
+    }
+    
     fn get_mass(&self) -> f64 {
         self.mass
     }
@@ -53,6 +62,8 @@ impl PhysicsBody for GravitatingBody {
     fn set_velocity(&mut self, velocity: Vector3<f64>) {
         self.velocity = velocity;
     }
+
+
 }
 
 #[cfg(test)]

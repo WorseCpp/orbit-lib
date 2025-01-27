@@ -3,10 +3,9 @@ use na::{Vector3};
 
 use super::*;
 
-pub fn verlet_integrate<F, B>(body: &mut B, dt: f64, get_acceleration: F)
+pub fn verlet_integrate<F>(body: &mut dyn PhysicsBody, dt: f64, get_acceleration: F)
 where
     F: Fn(&Vector3<f64>) -> Vector3<f64>,
-    B: PhysicsBody,
 {
     let old_acc = get_acceleration(&body.get_position());
     // Calculate the new position
@@ -56,5 +55,5 @@ mod tests {
         let tolerance = initial_energy.abs() * 1.0e-5;
 
         assert!(energy_difference < tolerance, "Energy conservation test failed: difference = {}, tolerance = {}", energy_difference, tolerance);
-    }
+    }   
 }
