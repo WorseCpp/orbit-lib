@@ -1,6 +1,7 @@
 extern crate nalgebra as na;
 use na::{Vector3};
 use crate::grav::GravitatingBody;
+
 pub fn verlet_integrate<F>(body: &mut GravitatingBody, dt: f64, get_acceleration: F)
 where
     F: Fn(&Vector3<f64>) -> Vector3<f64>,
@@ -13,14 +14,10 @@ where
     // Calculate the new velocity
     let new_velocity = body.get_velocity() + 0.5 * (old_acc + get_acceleration(&new_position)) * dt;
 
-    //println!("Old acceleration: {:?}, {:?}", old_acc, &body.get_position());
-
     // Update the body's position and velocity
     body.set_position(new_position);
     body.set_velocity(new_velocity);
 }
-
-
 
 #[cfg(test)]
 mod tests {
