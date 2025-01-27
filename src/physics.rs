@@ -1,4 +1,5 @@
 extern crate nalgebra as na;
+use integrators::verlet_integrate;
 use na::{Vector3};
 
 mod grav;
@@ -39,32 +40,54 @@ impl PhysicsWorld {
         acceleration
     }
 
+    // Vertlet
     pub fn update_bodies(&mut self, dt: f64) {
 
-        let mut new_gravs = self.gravitational_bodies.clone();
-        let mut new_balls = self.ballistic_bodies.clone();
-
         let grav_bodies = self.gravitational_bodies.clone();
-        for body in &mut self.gravitational_bodies {
-            
-            let acc_fn = |pos: &Vector3<f64>| {
-                let grav_bodies = &grav_bodies;
-                self.calculate_gravitational_acceleration(*pos)
-            };
+        
+        let mut new_pos = Vec::<Vector3::<f64>>::new();
+        let mut new_vel = Vec::<Vector3::<f64>>::new();
+        let mut new_g_pos = Vec::<Vector3::<f64>>::new();
+        let mut new_g_vel = Vec::<Vector3::<f64>>::new();
+        
+        for body in &self.gravitational_bodies {
 
-            integrators::verlet_integrate(body.as_mut(), dt, acc_fn);
+            let old_acc = self.calculate_gravitational_acceleration(body.get_position());
+            // Calculate the new position
+            let new_position = body.get_position() + body.get_velocity() * dt + 0.5 * old_acc * dt * dt;
+
+            // Calculate the new velocity
+            let new_velocity = body.get_velocity() + 0.5 * (old_acc + self.calculate_gravitational_acceleration(new_position)) * dt;
+
+            // Update the body's position and velocity
+            new_g_pos.push(new_position);
+            new_g_vel.push(new_velocity);
         }
 
-        let ball_bodies = self.ballistic_bodies.clone();
-        for body in &mut self.ballistic_bodies {
-            
-            let acc_fn = |pos: &Vector3<f64>| {
-                let ball_bodies = &ball_bodies;
-                self.calculate_gravitational_acceleration(*pos)
-            };
+        for body in &self.ballistic_bodies {
 
-            integrators::verlet_integrate(body.as_mut(), dt, acc_fn);
+            let old_acc = self.calculate_gravitational_acceleration(body.get_position());
+            // Calculate the new position
+            let new_position = body.get_position() + body.get_velocity() * dt + 0.5 * old_acc * dt * dt;
+
+            // Calculate the new velocity
+            let new_velocity = body.get_velocity() + 0.5 * (old_acc + self.calculate_gravitational_acceleration(new_position)) * dt;
+
+            // Update the body's position and velocity
+            new_pos.push(new_position);
+            new_vel.push(new_velocity);
         }
+
+        for (i, body) in self.gravitational_bodies.iter_mut().enumerate() {
+            body.set_position(new_g_pos[i]);
+            body.set_velocity(new_g_vel[i]);
+        }
+
+        for (i, body) in self.ballistic_bodies.iter_mut().enumerate() {
+            body.set_position(new_pos[i]);
+            body.set_velocity(new_vel[i]);
+        }
+
     }
 
 }  // end of PhysicsWorld

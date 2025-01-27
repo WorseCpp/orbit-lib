@@ -1,9 +1,10 @@
 extern crate nalgebra as na;
 use na::{Vector3};
 
+
 use super::*;
 
-pub fn verlet_integrate<F>(body: &mut dyn PhysicsBody, dt: f64, get_acceleration: F)
+pub fn verlet_integrate<F>(body: &dyn PhysicsBody, dt: f64, get_acceleration: F) -> (Vector3<f64>, Vector3<f64>)
 where
     F: Fn(&Vector3<f64>) -> Vector3<f64>,
 {
@@ -15,8 +16,7 @@ where
     let new_velocity = body.get_velocity() + 0.5 * (old_acc + get_acceleration(&new_position)) * dt;
 
     // Update the body's position and velocity
-    body.set_position(new_position);
-    body.set_velocity(new_velocity);
+    (new_position, new_velocity)
 }
 
 #[cfg(test)]
@@ -45,7 +45,10 @@ mod tests {
         let initial_energy = satellite.get_kinetic() + satellite.get_mass() * earth.get_grav_potential_field(satellite.get_position());
 
         for _ in 0..1000 {
-            verlet_integrate(&mut satellite, dt, |pos| earth.get_grav_acc(*pos));
+            let (new_pos, new_vel) = verlet_integrate(&satellite, dt, |pos| earth.get_grav_acc(*pos));
+            satellite.set_position(new_pos);
+            satellite.set_velocity(new_vel);
+            
             //println!("Energy: {}", satellite.get_kinetic() + satellite.get_mass() * earth.get_grav_potential_field(satellite.get_position()));
         }
 
